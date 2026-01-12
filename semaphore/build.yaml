@@ -1,0 +1,11 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
+build_from:
+  aarch64: "ghcr.io/home-assistant/aarch64-base:3.23"
+  amd64: "ghcr.io/home-assistant/amd64-base:3.23"
+labels:
+  org.opencontainers.image.title: "Home Assistant Add-on: Semaphore UI add-on"
+  org.opencontainers.image.description: "Modern UI for Ansible, Terraform/OpenTofu/Terragrunt, PowerShell and other DevOps tools."
+  org.opencontainers.image.source: "https://github.com/felixilgatto/addons-semaphore"
+  org.opencontainers.image.licenses: "Apache License 2.0"
+args:
+  SEMAPHORE_VERSION: "2.16.47"

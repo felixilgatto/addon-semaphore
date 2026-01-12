@@ -1,0 +1,33 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: Semaphore UI add-on
+version: "1.0.0"
+slug: semaphore
+description: Semaphore UI add-on
+#url: "https://github.com/home-assistant/addons-example/tree/main/example" # TODO
+ingress: true
+ingress_port: 3000
+panel_icon: "mdi:server-network"
+panel_title: "Semaphore"
+panel_admin: true
+#webui: "[PROTO:ssl]://[HOST]:[PORT:3000]"
+ports:
+  3000/tcp: null
+ports_description:
+  3000/tcp: Semaphore User Interface
+arch:
+  - aarch64
+  - amd64
+init: false
+map:
+  - share:rw
+options:
+  admin_login: "admin"
+  admin_password: "changeme"
+  admin_name: "Admin"
+  admin_email: "admin@example.com"
+schema:
+  admin_login: "str"
+  admin_password: "str"
+  admin_name: "str"
+  admin_email: "str"
+#image: "ghcr.io/home-assistant/{arch}-addon-example" # TODO
