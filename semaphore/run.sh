@@ -4,9 +4,7 @@
 # s6-overlay docs: https://github.com/just-containers/s6-overlay
 # ==============================================================================
 
-# Add your code here
 export SEMAPHORE_PORT=3000
-export SEMAPHORE_INTERFACE=0.0.0.0
 
 export SEMAPHORE_COOKIE_HASH=$(head -c32 /dev/urandom | base64)
 export SEMAPHORE_COOKIE_ENCRYPTION=$(head -c32 /dev/urandom | base64)
@@ -15,7 +13,6 @@ export SEMAPHORE_ACCESS_KEY_ENCRYPTION=$(head -c32 /dev/urandom | base64)
 export SEMAPHORE_DB_DIALECT=sqlite
 export SEMAPHORE_DB_HOST=./database.sqlite
 
-bashio::log.debug "$(semaphore user)"
 semaphore user add --admin \
     --login $(bashio::config 'admin_login') \
     --password $(bashio::config 'admin_password') \
@@ -23,16 +20,4 @@ semaphore user add --admin \
     --email $(bashio::config 'admin_email') \
     --no-config
 
-semaphore server --no-config
-
-# Declare variables
-#declare message
-
-## Get the 'message' key from the user config options.
-#message=$(bashio::config 'message')
-
-## Print the message the user supplied, defaults to "Hello World..."
-#bashio::log.info "${message:="Hello World..."}"
-
-## Run your program
-#exec /usr/bin/my_program
+exec semaphore server --no-config
