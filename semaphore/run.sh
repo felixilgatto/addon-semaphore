@@ -20,4 +20,8 @@ semaphore user add --admin \
     --email $(bashio::config 'admin_email') \
     --no-config
 
+# Start nginx in the background
+nginx
+
+# Start Semaphore in the foreground
 exec semaphore server --no-config
