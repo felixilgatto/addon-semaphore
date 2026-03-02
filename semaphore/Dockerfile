@@ -18,8 +18,8 @@ RUN \
 # Download Semaphore
 RUN \
     ARCH="${BUILD_ARCH}" && if [ "${ARCH}" = "aarch64" ]; then ARCH="arm64"; fi && \
-    curl -o semaphore_${SEMAPHORE_VERSION}_linux_${ARCH}.tar.gz -L https://github.com/semaphoreui/semaphore/releases/download/v${SEMAPHORE_VERSION}/semaphore_${SEMAPHORE_VERSION}_linux_${ARCH}.tar.gz && \
-    tar xf semaphore_${SEMAPHORE_VERSION}_linux_${ARCH}.tar.gz && \
+    curl -o semaphore.tar.gz -L https://github.com/semaphoreui/semaphore/releases/download/v${SEMAPHORE_VERSION}/semaphore_${SEMAPHORE_VERSION}_linux_${ARCH}.tar.gz && \
+    tar xf semaphore.tar.gz && \
     mv semaphore /usr/local/bin/
 
 # Copy Caddy configuration
@@ -29,4 +29,11 @@ COPY Caddyfile /etc/caddy/Caddyfile
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-ENTRYPOINT [ "/run.sh" ]
+# The base Home Assistant images already provide s6-overlay and start
+# an init process at `/init`.  We must not override the ENTRYPOINT
+# because that bypasses the s6 init and the container_environment
+# directory it creates (/run/s6/container_environment).  Instead we
+# leave the default entrypoint and simply invoke our start script
+# via CMD, which the init process will execute.
+
+CMD [ "/run.sh" ]
