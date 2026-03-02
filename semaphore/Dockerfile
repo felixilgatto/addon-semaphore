@@ -5,8 +5,13 @@ FROM $BUILD_FROM
 # Execute during the build of the image
 ARG SEMAPHORE_VERSION BUILD_ARCH
 
-# Install nginx
-RUN apk add --no-cache nginx
+# Install Caddy
+RUN \
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list \
+    chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
+    chmod o+r /etc/apt/sources.list.d/caddy-stable.list \
+    apt-get update && apt-get install -y caddy
 
 # Download Semaphore
 RUN \
@@ -22,4 +27,4 @@ COPY nginx.conf /etc/nginx/http.d/default.conf
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-CMD [ "/run.sh" ]
+ENTRYPOINT [ "/run.sh" ]

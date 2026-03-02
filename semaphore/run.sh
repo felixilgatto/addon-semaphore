@@ -20,8 +20,12 @@ semaphore user add --admin \
     --email $(bashio::config 'admin_email') \
     --no-config
 
-# Start nginx in the background
-nginx
+# Start Semaphore in the background
+semaphore server --no-config &
+SEMAPHORE_PID=$!
 
-# Start Semaphore in the foreground
-exec semaphore server --no-config
+# Start Caddy in the foreground
+caddy run --config /etc/caddy/Caddyfile
+
+# If Caddy exits, kill Semaphore
+kill $SEMAPHORE_PID 2>/dev/null || true
