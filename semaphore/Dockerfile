@@ -5,13 +5,15 @@ FROM $BUILD_FROM
 # Execute during the build of the image
 ARG SEMAPHORE_VERSION BUILD_ARCH
 
-# Install Caddy
+# Install Caddy by downloading the prebuilt binary (portable across bases)
 RUN \
-    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
-    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list \
-    chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg \
-    chmod o+r /etc/apt/sources.list.d/caddy-stable.list \
-    apt-get update && apt-get install -y caddy
+    ARCH="${BUILD_ARCH}" && if [ "${ARCH}" = "aarch64" ]; then ARCH="arm64"; fi && \
+    CADDY_VER="2.6.4" && \
+    curl -fsSL -o /tmp/caddy.tar.gz "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VER}/caddy_${CADDY_VER}_linux_${ARCH}.tar.gz" && \
+    tar -xzf /tmp/caddy.tar.gz -C /tmp && \
+    mv /tmp/caddy /usr/local/bin/caddy && \
+    chmod +x /usr/local/bin/caddy && \
+    rm -f /tmp/caddy.tar.gz
 
 # Download Semaphore
 RUN \
@@ -20,8 +22,8 @@ RUN \
     tar xf semaphore_${SEMAPHORE_VERSION}_linux_${ARCH}.tar.gz && \
     mv semaphore /usr/local/bin/
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/http.d/default.conf
+# Copy Caddy configuration
+COPY Caddyfile /etc/caddy/Caddyfile
 
 # Copy the run script
 COPY run.sh /
